@@ -17,7 +17,7 @@ Do not commit a live Synapse data directory. The real `homeserver.yaml`, SQLite 
 modules:
   - module: nixor_policy_checker.NixorPolicyChecker
     config:
-      panapticon_api_url: "http://host.docker.internal:4000/internal/policy/check"
+      governance_api_url: "http://host.docker.internal:4000/internal/policy/check"
       policy_shared_secret: "replace-with-random-secret"
       fail_closed: true
 ```
