@@ -1,0 +1,29 @@
+# Local Synapse runtime state
+homeserver.yaml
+homeserver.db
+homeserver.db-*
+*.db
+*.db-shm
+*.db-wal
+media_store/
+uploads/
+logs/
+*.log
+*.pid
+
+# Local secrets and signing keys
+*.signing.key
+*.key
+*.pem
+*.crt
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

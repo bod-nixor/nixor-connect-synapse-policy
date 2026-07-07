@@ -1,0 +1,36 @@
+server_name: "localhost"
+pid_file: /data/homeserver.pid
+
+listeners:
+  - port: 8008
+    type: http
+    tls: false
+    x_forwarded: true
+    resources:
+      - names:
+          - client
+          - federation
+        compress: false
+
+database:
+  name: sqlite3
+  args:
+    database: /data/homeserver.db
+
+log_config: "/data/localhost.log.config"
+media_store_path: /data/media_store
+registration_shared_secret: "replace-with-random-secret"
+macaroon_secret_key: "replace-with-random-secret"
+form_secret: "replace-with-random-secret"
+signing_key_path: "/data/localhost.signing.key"
+report_stats: false
+
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+modules:
+  - module: nixor_policy_checker.NixorPolicyChecker
+    config:
+      panapticon_api_url: "http://host.docker.internal:4000/internal/policy/check"
+      policy_shared_secret: "replace-with-random-secret"
+      fail_closed: true
