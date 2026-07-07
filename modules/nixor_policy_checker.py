@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class NixorPolicyChecker:
     def __init__(self, config: Dict[str, Any], api: ModuleApi):
         self.api = api
-        self.panapticon_api_url = config.get(
-            "panapticon_api_url",
+        self.governance_api_url = config.get(
+            "governance_api_url",
             "http://host.docker.internal:4000/internal/policy/check",
         )
         self.policy_shared_secret = config.get("policy_shared_secret", "")
@@ -82,7 +82,7 @@ class NixorPolicyChecker:
             action = "create_room"
             normalized_room_type = "room"
 
-        allowed = self._check_panapticon_policy(
+        allowed = self._check_governance_policy(
             matrix_user_id=user_id,
             action=action,
             room_type=normalized_room_type,
@@ -117,7 +117,7 @@ class NixorPolicyChecker:
 
         return None
 
-    def _check_panapticon_policy(
+    def _check_governance_policy(
         self,
         matrix_user_id: str,
         action: str,
@@ -134,7 +134,7 @@ class NixorPolicyChecker:
         data = json.dumps(payload).encode("utf-8")
 
         request = urllib.request.Request(
-            self.panapticon_api_url,
+            self.governance_api_url,
             data=data,
             method="POST",
             headers={
@@ -154,14 +154,14 @@ class NixorPolicyChecker:
                 error_body = ""
 
             logger.warning(
-                "Panapticon API denied policy check status=%s body=%s payload=%s",
+                "Governance API denied policy check status=%s body=%s payload=%s",
                 e.code,
                 error_body,
                 payload,
             )
             return False
         except Exception:
-            logger.exception("Panapticon API policy check failed payload=%s", payload)
+            logger.exception("Governance API policy check failed payload=%s", payload)
             return not self.fail_closed
         
     async def check_event_for_spam(self, event):
