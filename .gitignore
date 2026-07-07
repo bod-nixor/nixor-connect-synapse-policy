@@ -22,6 +22,12 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
+# Local environment and dependency folders
+.env
+.env.*
+!.env.example
+node_modules/
+
 # OS/editor files
 .DS_Store
 Thumbs.db
