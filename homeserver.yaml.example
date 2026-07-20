@@ -1,10 +1,16 @@
-server_name: "localhost"
-pid_file: /data/homeserver.pid
+# Production-shaped Synapse configuration. Replace every replace-with-* value
+# and keep live secrets/configuration outside Git.
+server_name: "replace-with-immutable-matrix-server-name"
+public_baseurl: "https://matrix.nixorcorporate.com/"
+pid_file: /var/lib/synapse/homeserver.pid
 
 listeners:
   - port: 8008
     type: http
     tls: false
+    bind_addresses:
+      - "127.0.0.1"
+      - "::1"
     x_forwarded: true
     resources:
       - names:
@@ -12,18 +18,30 @@ listeners:
           - federation
         compress: false
 
+# SQLite is for isolated tests only. Production must use PostgreSQL.
 database:
-  name: sqlite3
+  name: psycopg2
+  txn_limit: 10000
   args:
-    database: /data/homeserver.db
+    user: synapse
+    password: "replace-with-postgresql-password"
+    database: synapse
+    host: "replace-with-postgresql-host"
+    port: 5432
+    cp_min: 5
+    cp_max: 10
 
-log_config: "/data/localhost.log.config"
-media_store_path: /data/media_store
-registration_shared_secret: "replace-with-random-secret"
-macaroon_secret_key: "replace-with-random-secret"
-form_secret: "replace-with-random-secret"
-signing_key_path: "/data/localhost.signing.key"
+log_config: "/etc/synapse/log.config"
+media_store_path: /var/lib/synapse/media_store
+registration_shared_secret: "replace-with-random-registration-secret"
+macaroon_secret_key: "replace-with-random-macaroon-secret"
+form_secret: "replace-with-random-form-secret"
+signing_key_path: "/var/lib/synapse/server.signing.key"
 report_stats: false
+
+enable_registration: false
+password_config:
+  enabled: false
 
 trusted_key_servers:
   - server_name: "matrix.org"
@@ -31,6 +49,6 @@ trusted_key_servers:
 modules:
   - module: nixor_policy_checker.NixorPolicyChecker
     config:
-      governance_api_url: "http://host.docker.internal:4000/internal/policy/check"
-      policy_shared_secret: "replace-with-random-secret"
+      governance_api_url: "https://panapticon.internal/internal/policy/check"
+      policy_shared_secret_file: "/run/secrets/nixor-policy-shared-secret"
       fail_closed: true
